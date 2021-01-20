@@ -8,6 +8,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.DefaultRetryPolicy;
@@ -23,9 +24,12 @@ import org.json.JSONObject;
 
 public class MainActivity extends AppCompatActivity {
 
-    EditText etxIp, etxId, etxPw;
+    TextView txtAddUser;
+    EditText etxEmail, etxPw;
     Button btnReq;
-    String ID, PW;
+    String TAG = "MainActivity.class",
+            url = "http://192.168.0.105:3000";
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,11 +38,22 @@ public class MainActivity extends AppCompatActivity {
 
         init();
 
+        txtAddUser.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.d(TAG, "text onClick");
+                Intent intent = new Intent(MainActivity.this, AddUserActivity.class);
+                intent.putExtra("url", url);
+                startActivity(intent);
+                finish();
+            }
+        });
+
         btnReq.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 // 요청 코드
-                request();
+                request(etxEmail.getText().toString(), etxPw.getText().toString());
             }
         });
 
@@ -46,31 +61,30 @@ public class MainActivity extends AppCompatActivity {
 
     // view 연결 코드
     public void init() {
-        etxIp   = (EditText) findViewById(R.id.etx_main_ip);
-        etxId   = (EditText) findViewById(R.id.etx_main_id);
-        etxPw   = (EditText) findViewById(R.id.etx_main_pw);
-        btnReq  = (Button) findViewById(R.id.btn_main_request);
+        etxEmail = (EditText) findViewById(R.id.etx_main_email);
+        etxPw = (EditText) findViewById(R.id.etx_main_pw);
+        txtAddUser = (TextView) findViewById(R.id.txt_main_addUser);
+        btnReq = (Button) findViewById(R.id.btn_main_login);
     }
 
-    public void request() {
-        String url = etxIp.getText().toString();
-        Log.e("url",url);
+    //서버 요청 코드
+    public void request(String email, String pw) {
+        Log.e("url", url);
 
         JSONObject testjson = new JSONObject();
         try {
-            testjson.put("id", etxId.getText().toString());
-            testjson.put("password", etxPw.getText().toString());
+            testjson.put("email", email);
+            testjson.put("password", pw);
             String jsonString = testjson.toString();
 
+            Log.e(TAG, jsonString);
             final RequestQueue requestQueue = Volley.newRequestQueue(MainActivity.this);
-            final JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, url,testjson, new Response.Listener<JSONObject>() {
+            final JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, url, testjson, new Response.Listener<JSONObject>() {
 
                 //데이터 전달을 끝내고 이제 그 응답을 받을 차례입니다.
                 @Override
                 public void onResponse(JSONObject response) {
                     try {
-                        Log.d("MainActivity.class","데이터전송 성공");
-
                         //받은 json형식의 응답을 받아
                         JSONObject jsonObject = new JSONObject(response.toString());
 
@@ -79,18 +93,18 @@ public class MainActivity extends AppCompatActivity {
                         String resultPassword = jsonObject.getString("approve_pw");
 
                         //만약 그 값이 같다면 로그인에 성공한 것입니다.
-                        if(resultId.equals("OK") & resultPassword.equals("OK")){
-
-                            //이 곳에 성공 시 화면이동을 하는 등의 코드를 입력하시면 됩니다.
-                            Toast.makeText(MainActivity.this, "로그인 완료", Toast.LENGTH_LONG).show();
-                            Intent intent = new Intent(MainActivity.this, HomeActivity.class);
-                            intent.putExtra("url",url);
-                            startActivity(intent);
-                            finish();
-                        }else{
+                        if (!(resultId.equals("OK") & resultPassword.equals("OK"))) {
                             //로그인에 실패했을 경우 실행할 코드를 입력하시면 됩니다.
+                            Toast.makeText(MainActivity.this, "로그인 실패", Toast.LENGTH_LONG).show();
+                            return;
                         }
 
+                        //이 곳에 성공 시 화면이동을 하는 등의 코드를 입력하시면 됩니다.
+                        Toast.makeText(MainActivity.this, "로그인 완료", Toast.LENGTH_LONG).show();
+                        Intent intent = new Intent(MainActivity.this, HomeActivity.class);
+                        intent.putExtra("url", url);
+                        startActivity(intent);
+                        finish();
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
@@ -100,7 +114,6 @@ public class MainActivity extends AppCompatActivity {
                 @Override
                 public void onErrorResponse(VolleyError error) {
                     error.printStackTrace();
-                    //Toast.makeText(MainActivity.this, error.toString(), Toast.LENGTH_SHORT).show();
                 }
             });
             jsonObjectRequest.setRetryPolicy(new DefaultRetryPolicy(DefaultRetryPolicy.DEFAULT_TIMEOUT_MS, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));

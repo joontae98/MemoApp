@@ -10,6 +10,29 @@
 
     <Space
         android:layout_width="wrap_content"
+        android:layout_height="10dp"/>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:weightSum="10">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="2"
+            android:gravity="center"
+            android:text="Name : " />
+
+        <EditText
+            android:id="@+id/etx_addUser_name"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="8" />
+    </LinearLayout>
+
+    <Space
+        android:layout_width="wrap_content"
         android:layout_height="10dp" />
 
     <LinearLayout
@@ -26,7 +49,7 @@
             android:text="Email : " />
 
         <EditText
-            android:id="@+id/etx_main_email"
+            android:id="@+id/etx_addUser_email"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="8" />
@@ -50,7 +73,7 @@
             android:text="PassWord : " />
 
         <EditText
-            android:id="@+id/etx_main_pw"
+            android:id="@+id/etx_addUser_pw"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="8" />
@@ -60,23 +83,9 @@
         android:layout_width="wrap_content"
         android:layout_height="20dp" />
 
-    <TextView
-        android:id="@+id/txt_main_addUser"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:clickable="true"
-        android:layout_gravity="end"
-        android:paddingRight="20dp"
-        android:text="Add User"
-        android:textSize="10sp" />
-
-    <Space
-        android:layout_width="wrap_content"
-        android:layout_height="20dp" />
-
     <Button
-        android:id="@+id/btn_main_login"
+        android:id="@+id/btn_addUser_request"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Login" />
+        android:text="Create" />
 </LinearLayout>
