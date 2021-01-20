@@ -1,7 +1,6 @@
 package com.example.loginapp_android;
 
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -10,8 +9,6 @@ import android.widget.EditText;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
 import com.android.volley.Request;
 import com.android.volley.Response;
@@ -22,14 +19,9 @@ import com.android.volley.toolbox.Volley;
 import java.util.HashMap;
 import java.util.Map;
 
-public class HomeActivity extends AppCompatActivity {
+public class CreateActivity extends AppCompatActivity {
 
     String TAG = "HomeActivity";
-
-    RecyclerView recyclerView;
-    RecyclerView.Adapter mAdapter;
-    RecyclerView.LayoutManager layoutManager;
-
     String title, memo;
     EditText etxTitle, etxMemo;
     Button btnCreate;
@@ -40,11 +32,6 @@ public class HomeActivity extends AppCompatActivity {
         setContentView(R.layout.activity_home);
 
         init();
-
-        recyclerView.setHasFixedSize(true);
-        layoutManager = new LinearLayoutManager(this);
-        recyclerView.setLayoutManager(layoutManager);
-        recyclerView.setAdapter(mAdapter);
 
         btnCreate.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -62,7 +49,6 @@ public class HomeActivity extends AppCompatActivity {
         etxTitle = (EditText) findViewById(R.id.etx_home_title);
         etxMemo = (EditText) findViewById(R.id.etx_home_memo);
         btnCreate = (Button) findViewById(R.id.btn_home_create);
-        recyclerView = (RecyclerView) findViewById(R.id.view_home_recycler);
     }
 
     public void createMemo(String title, String memo) {
@@ -94,7 +80,7 @@ public class HomeActivity extends AppCompatActivity {
             }
         };
         request.setShouldCache(false);
-        Volley.newRequestQueue(HomeActivity.this).add(request);
+        Volley.newRequestQueue(CreateActivity.this).add(request);
     }
 }
 

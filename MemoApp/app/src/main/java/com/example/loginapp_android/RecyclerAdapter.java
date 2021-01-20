@@ -1,0 +1,52 @@
+package com.example.loginapp_android;
+
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+
+import android.widget.LinearLayout;
+import android.widget.TextView;
+
+import androidx.recyclerview.widget.RecyclerView;
+
+//RecyclerView 연결 Adapter 클래스
+public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.MyViewHolder> {
+    private List<MemoData> mDataset;
+
+    public static class MyViewHolder extends RecyclerView.ViewHolder {
+        TextView txtTitle,
+                txtContent;
+
+        public MyViewHolder(View v) {
+            super(v);
+            //view connect
+            txtTitle = (TextView) v.findViewById(R.id.txt_row_title);
+            txtContent = (TextView) v.findViewById(R.id.txt_row_content);
+        }
+    }
+
+    public RecyclerAdapter(List<MemoData> myDataset) {                     //생성자 매서드
+        mDataset = myDataset;
+    }
+
+    @Override
+    public MyViewHolder onCreateViewHolder(ViewGroup parent,
+                                           int viewType) {
+        LinearLayout v = (LinearLayout) LayoutInflater.from(parent.getContext())
+                .inflate(R.layout.row_memo, parent, false);
+        MyViewHolder vh = new MyViewHolder(v);
+        return vh;
+    }
+
+    @Override
+    public void onBindViewHolder(MyViewHolder holder, int position) {
+        //view insert
+    }
+
+    @Override
+    public int getItemCount() {
+        return mDataset == null ? 0 : mDataset.size();
+    }
+
+}
+
