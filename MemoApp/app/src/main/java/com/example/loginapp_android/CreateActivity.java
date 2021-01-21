@@ -21,42 +21,43 @@ import java.util.Map;
 
 public class CreateActivity extends AppCompatActivity {
 
-    String TAG = "HomeActivity";
-    String title, memo;
+    String TAG = "CreateActivity";
+
+    String title, memo, url, userId;
     EditText etxTitle, etxMemo;
-    Button btnCreate;
+    Button btnSave;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_home);
+        setContentView(R.layout.activity_create);
+
+        Intent intent = getIntent();
+        Bundle bundle = intent.getExtras();
+        userId = bundle.getString("userId");
+        url = bundle.getString("url");
+        url += "/create";
 
         init();
 
-        btnCreate.setOnClickListener(new View.OnClickListener() {
+        btnSave.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 title = etxTitle.getText().toString();
                 memo = etxMemo.getText().toString();
                 createMemo(title,memo);
-                etxTitle.setText("");
-                etxMemo.setText("");
+                finish();
             }
         });
     }
 
     public void init() {
-        etxTitle = (EditText) findViewById(R.id.etx_home_title);
-        etxMemo = (EditText) findViewById(R.id.etx_home_memo);
-        btnCreate = (Button) findViewById(R.id.btn_home_create);
+        etxTitle = (EditText) findViewById(R.id.etx_create_title);
+        etxMemo = (EditText) findViewById(R.id.etx_create_memo);
+        btnSave = (Button) findViewById(R.id.btn_create_save);
     }
 
     public void createMemo(String title, String memo) {
-        Intent intent = getIntent();
-        Bundle bundle = intent.getExtras();
-        String url = bundle.getString("url");
-        url += "/memo";
-        Log.e(TAG, url);
         StringRequest request = new StringRequest(Request.Method.POST, url,
                 new Response.Listener<String>() {
                     @Override
@@ -76,6 +77,7 @@ public class CreateActivity extends AppCompatActivity {
                 Map<String, String> params = new HashMap<>();
                 params.put("title", title);
                 params.put("content", memo);
+                params.put("userId",userId);
                 return params;
             }
         };

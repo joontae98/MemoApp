@@ -28,7 +28,7 @@ public class MainActivity extends AppCompatActivity {
     EditText etxEmail, etxPw;
     Button btnReq;
     String TAG = "MainActivity.class",
-            url = "http://192.168.0.105:3000";
+            url = "http://192.168.0.121:3000";
 
 
     @Override
@@ -45,7 +45,6 @@ public class MainActivity extends AppCompatActivity {
                 Intent intent = new Intent(MainActivity.this, AddUserActivity.class);
                 intent.putExtra("url", url);
                 startActivity(intent);
-                finish();
             }
         });
 
@@ -53,7 +52,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 // 요청 코드
-                request(etxEmail.getText().toString(), etxPw.getText().toString());
+                login(etxEmail.getText().toString(), etxPw.getText().toString());
             }
         });
 
@@ -68,7 +67,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     //서버 요청 코드
-    public void request(String email, String pw) {
+    public void login(String email, String pw) {
         Log.e("url", url);
 
         JSONObject testjson = new JSONObject();
@@ -85,24 +84,26 @@ public class MainActivity extends AppCompatActivity {
                 @Override
                 public void onResponse(JSONObject response) {
                     try {
+                        Log.e(TAG,response.toString());
                         //받은 json형식의 응답을 받아
                         JSONObject jsonObject = new JSONObject(response.toString());
 
                         //key값에 따라 value값을 쪼개 받아옵니다.
                         String resultId = jsonObject.getString("approve_id");
                         String resultPassword = jsonObject.getString("approve_pw");
+                        String userId = jsonObject.getString("_id");
 
-                        //만약 그 값이 같다면 로그인에 성공한 것입니다.
                         if (!(resultId.equals("OK") & resultPassword.equals("OK"))) {
                             //로그인에 실패했을 경우 실행할 코드를 입력하시면 됩니다.
-                            Toast.makeText(MainActivity.this, "로그인 실패", Toast.LENGTH_LONG).show();
+                            Toast.makeText(MainActivity.this, "로그인 실패", Toast.LENGTH_SHORT).show();
                             return;
                         }
 
                         //이 곳에 성공 시 화면이동을 하는 등의 코드를 입력하시면 됩니다.
-                        Toast.makeText(MainActivity.this, "로그인 완료", Toast.LENGTH_LONG).show();
+                        Toast.makeText(MainActivity.this, "로그인 완료", Toast.LENGTH_SHORT).show();
                         Intent intent = new Intent(MainActivity.this, HomeActivity.class);
                         intent.putExtra("url", url);
+                        intent.putExtra("userId", userId);
                         startActivity(intent);
                         finish();
                     } catch (Exception e) {

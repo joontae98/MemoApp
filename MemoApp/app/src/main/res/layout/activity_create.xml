@@ -11,7 +11,7 @@
         android:layout_height="100dp" />
 
     <EditText
-        android:id="@+id/etx_home_title"
+        android:id="@+id/etx_create_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="title" />
@@ -21,7 +21,7 @@
         android:layout_height="10dp" />
 
     <EditText
-        android:id="@+id/etx_home_memo"
+        android:id="@+id/etx_create_memo"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="memo" />
@@ -31,7 +31,7 @@
         android:layout_height="20dp" />
 
     <Button
-        android:id="@+id/btn_home_create"
+        android:id="@+id/btn_create_save"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Create" />

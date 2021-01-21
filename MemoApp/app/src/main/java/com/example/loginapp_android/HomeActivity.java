@@ -1,12 +1,9 @@
 package com.example.loginapp_android;
 
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.EditText;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -19,6 +16,10 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
+
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -26,12 +27,14 @@ public class HomeActivity extends AppCompatActivity {
 
     String TAG = "HomeActivity";
 
+    ArrayList<HashMap<String,String>> dataMap = new ArrayList<>();
+    HashMap<String,String> memoData;
+
     RecyclerView recyclerView;
     RecyclerView.Adapter mAdapter;
     RecyclerView.LayoutManager layoutManager;
 
-    String title, memo;
-    EditText etxTitle, etxMemo;
+    String url, userId;
     Button btnCreate;
 
     @Override
@@ -39,43 +42,59 @@ public class HomeActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
 
+        Intent intent = getIntent();
+        Bundle bundle = intent.getExtras();
+        userId = bundle.getString("userId");
+        url = bundle.getString("url");
+        url += "/home";
+
         init();
+        getMemos();
 
         recyclerView.setHasFixedSize(true);
-        layoutManager = new LinearLayoutManager(this);
+        layoutManager = new LinearLayoutManager(HomeActivity.this);
         recyclerView.setLayoutManager(layoutManager);
-        recyclerView.setAdapter(mAdapter);
+
 
         btnCreate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                title = etxTitle.getText().toString();
-                memo = etxMemo.getText().toString();
-                createMemo(title,memo);
-                etxTitle.setText("");
-                etxMemo.setText("");
+                Intent intent = new Intent(HomeActivity.this, CreateActivity.class);
+                intent.putExtra("url", url);
+                intent.putExtra("userId", userId);
+                startActivity(intent);
             }
         });
     }
 
     public void init() {
-        etxTitle = (EditText) findViewById(R.id.etx_home_title);
-        etxMemo = (EditText) findViewById(R.id.etx_home_memo);
-        btnCreate = (Button) findViewById(R.id.btn_home_create);
+        btnCreate = (Button) findViewById(R.id.btn_create_save);
         recyclerView = (RecyclerView) findViewById(R.id.view_home_recycler);
     }
 
-    public void createMemo(String title, String memo) {
-        Intent intent = getIntent();
-        Bundle bundle = intent.getExtras();
-        String url = bundle.getString("url");
-        url += "/memo";
-        Log.e(TAG, url);
+    public void getMemos(){
+
         StringRequest request = new StringRequest(Request.Method.POST, url,
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
-                        Log.e(TAG, "onResponse(Create) 호출됨 :" + response);
+                        try {
+//                            Log.e(TAG, "getMemo 호출됨 :" + response);
+                            JSONArray jarr = new JSONArray(response);
+                            for (int i =0 ; i < jarr.length(); i++){
+                                memoData = new HashMap<String, String>();
+                                JSONObject order = jarr.getJSONObject(i);
+                                memoData.put("title", order.getString("title"));
+                                memoData.put("content", order.getString("content"));
+                                memoData.put("memoId",order.getString("_id"));
+                                dataMap.add(memoData);
+                            }
+                            mAdapter = new RecyclerAdapter(dataMap,url);
+                            recyclerView.setAdapter(mAdapter);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+
                     }
                 },
                 new Response.ErrorListener() {
@@ -88,13 +107,14 @@ public class HomeActivity extends AppCompatActivity {
             @Override
             protected Map<String, String> getParams() {
                 Map<String, String> params = new HashMap<>();
-                params.put("title", title);
-                params.put("content", memo);
+                params.put("userId", userId);
                 return params;
             }
         };
         request.setShouldCache(false);
         Volley.newRequestQueue(HomeActivity.this).add(request);
+
     }
+
 }
 

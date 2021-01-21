@@ -36,8 +36,6 @@ public class AddUserActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 createUser(etxName.getText().toString(), etxEmail.getText().toString(), etxPw.getText().toString());
-                Intent intent = new Intent(AddUserActivity.this, MainActivity.class);
-                startActivity(intent);
                 finish();
             }
         });
