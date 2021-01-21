@@ -22,7 +22,7 @@ module.exports = (app, User) => {
 
     app.post('/', (req, res) => {
         console.log('미들웨어 호출됨');
-        var approve = {'approve_id': 'NO', 'approve_pw': 'NO'};
+        var approve = {'approve_id': 'NO', 'approve_pw': 'NO','_id': ''};
         var paramEmail = req.body.email;
         var paramPassword = req.body.password;
         console.log('id : ' + paramEmail + '  pw : ' + paramPassword);
@@ -48,6 +48,7 @@ module.exports = (app, User) => {
             }
             approve.approve_id = 'OK';
             approve.approve_pw = 'OK';
+            approve._id = user._id;
             res.send(approve);
         })
     });
