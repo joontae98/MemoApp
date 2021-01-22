@@ -1,5 +1,6 @@
 package com.example.loginapp_android;
 
+import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -20,9 +21,6 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 
-import org.json.JSONArray;
-import org.json.JSONObject;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -31,26 +29,38 @@ import java.util.Map;
 public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.MyViewHolder> {
     private ArrayList<HashMap<String, String>> mDataset;
     private String mUrl;
+    private Context mContext;
 
     String TAG = "RecyclerAdapter";
+    public interface OnItemClickListener {
+        void onItemClick(View v, int pos, HashMap memo) ;
+    }
+    // 리스너 객체 참조를 저장하는 변수
+    private static OnItemClickListener mListener = null ;
+
+    // OnItemClickListener 리스너 객체 참조를 어댑터에 전달하는 메서드
+    public void setOnItemClickListener(OnItemClickListener listener) {
+        this.mListener = listener;
+    }
 
     public static class MyViewHolder extends RecyclerView.ViewHolder {
         TextView txtTitle,
                 txtContent;
         ImageButton btnMore;
 
-        public MyViewHolder(View v) {
-            super(v);
+        public MyViewHolder(View view) {
+            super(view);
             //view connect
-            txtTitle = (TextView) v.findViewById(R.id.txt_row_title);
-            txtContent = (TextView) v.findViewById(R.id.txt_row_content);
-            btnMore = (ImageButton) v.findViewById(R.id.btn_row_more);
+            txtTitle = (TextView) view.findViewById(R.id.txt_row_title);
+            txtContent = (TextView) view.findViewById(R.id.txt_row_content);
+            btnMore = (ImageButton) view.findViewById(R.id.btn_row_more);
         }
     }
 
-    public RecyclerAdapter(ArrayList<HashMap<String, String>> myDataset, String myUrl) {                     //생성자 매서드
+    public RecyclerAdapter(ArrayList<HashMap<String, String>> myDataset, String myUrl, Context myContext) {                     //생성자 매서드
         mDataset = myDataset;
-        mUrl = myUrl + "/remove";
+        mUrl = myUrl;
+        mContext = myContext;
     }
 
     @Override
@@ -72,57 +82,65 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.MyView
         holder.btnMore.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                PopupMenu.OnMenuItemClickListener listener = new PopupMenu.OnMenuItemClickListener() {
-                    @Override
-                    public boolean onMenuItemClick(MenuItem item) {
-                        // TODO Auto-generated method stub
-                        switch (item.getItemId()) {
-                            case R.id.modify:
-                                break;
-                            case R.id.delete:
-                                StringRequest request = new StringRequest(Request.Method.POST, mUrl,
-                                        new Response.Listener<String>() {
-                                            @Override
-                                            public void onResponse(String response) {
-                                                try {
-                                                    Log.e(TAG, "removeMemo 호출됨 :" + response);
-                                                } catch (Exception e) {
-                                                    e.printStackTrace();
-                                                }
-                                            }
-                                        },
-                                        new Response.ErrorListener() {
-                                            @Override
-                                            public void onErrorResponse(VolleyError error) {
-                                                error.printStackTrace();
-                                            }
-                                        }
-                                ) {
-                                    @Override
-                                    protected Map<String, String> getParams() {
-                                        Map<String, String> params = new HashMap<>();
-                                        params.put("memoId", memo.get("memoId").toString());
-                                        return params;
-                                    }
-                                };
-                                request.setShouldCache(false);
-                                Volley.newRequestQueue(v.getContext()).add(request);
-                                break;
-                        }
-                        return false;
+                int pos = position;
+                if (pos != RecyclerView.NO_POSITION) {
+                    // 리스너 객체의 메서드 호출.
+                    if (mListener != null) {
+                        mListener.onItemClick(v, pos, memo) ;
                     }
-                };
-
-                PopupMenu popup = new PopupMenu(v.getContext(), v);//v는 클릭된 뷰를 의미
-                        popup.getMenuInflater().inflate(R.menu.menu_popup, popup.getMenu());
-                        popup.setOnMenuItemClickListener(listener);
-                        popup.show();
+                }
+//                PopupMenu popup = new PopupMenu(mContext, v);//v는 클릭된 뷰를 의미
+//                        popup.getMenuInflater().inflate(R.menu.menu_popup, popup.getMenu());
+//                        popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+//                            @Override
+//                            public boolean onMenuItemClick(MenuItem item) {
+//                                switch (item.getItemId()){
+//                                    case R.id.modify:
+//                                        break;
+//                                    case R.id.delete:
+//                                        break;
+//                                }
+//                                return false;
+//                            }
+//                        });
+//                        popup.show();
             }
         });
     }
     @Override
     public int getItemCount() {
         return mDataset == null ? 0 : mDataset.size();
+    }
+
+    public void deleteMemo(String memoId, String url, Context mCtx) {
+        url += "/remove";
+        StringRequest request = new StringRequest(Request.Method.POST, url,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        try {
+                            Log.e("asdf", "remove 호출됨");
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        error.printStackTrace();
+                    }
+                }
+        ) {
+            @Override
+            protected Map<String, String> getParams() {
+                Map<String, String> params = new HashMap<>();
+                params.put("memoId", memoId);
+                return params;
+            }
+        };
+        request.setShouldCache(false);
+        Volley.newRequestQueue(mCtx).add(request);
     }
 
 }

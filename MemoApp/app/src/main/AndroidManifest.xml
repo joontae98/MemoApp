@@ -23,6 +23,7 @@
         <activity android:name=".HomeActivity"/>
         <activity android:name=".AddUserActivity"/>
         <activity android:name=".CreateActivity"/>
+        <activity android:name=".UpdateActivity"/>
     </application>
 
 </manifest>

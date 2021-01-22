@@ -31,13 +31,12 @@ module.exports = (app, Memo) => {
     // 하지만 post로 하는 이유는 url 이 노출 되기때문에 post로 보안성을 높임
     app.post('/home', (req, res) => {
         Memo.find({'user_id': req.body.userId}).exec((err, memos) => {
-            console.log(memos);
             res.send(memos);
         });
     })
 
     app.post('/home/remove', (req, res) => {
-        Memo.remove({'_id': req.body.memoId}).exec((err) => {
+        Memo.deleteOne({'_id': req.body.memoId}).exec((err) => {
             res.end();
         });
     })
