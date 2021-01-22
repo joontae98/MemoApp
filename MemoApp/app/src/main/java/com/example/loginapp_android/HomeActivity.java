@@ -59,8 +59,10 @@ public class HomeActivity extends AppCompatActivity {
                         String id = memo.get("memoId").toString();
                         switch (item.getItemId()) {
                             case R.id.modify:
-                                Intent intent = new Intent(HomeActivity.this, CreateActivity.class);
-                                intent.putExtra("memo",memo);
+                                Intent intent = new Intent(HomeActivity.this, UpdateActivity.class);
+                                intent.putExtra("content",memo.get("content").toString());
+                                intent.putExtra("memoId",memo.get("memoId").toString());
+                                intent.putExtra("title",memo.get("title").toString());
                                 intent.putExtra("url",url);
                                 startActivity(intent);
                                 break;
@@ -81,7 +83,7 @@ public class HomeActivity extends AppCompatActivity {
         btnCreate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(HomeActivity.this, UpdateActivity.class);
+                Intent intent = new Intent(HomeActivity.this, CreateActivity.class);
                 intent.putExtra("url", url);
                 intent.putExtra("userId", userId);
                 startActivity(intent);

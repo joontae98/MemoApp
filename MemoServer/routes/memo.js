@@ -33,12 +33,23 @@ module.exports = (app, Memo) => {
         Memo.find({'user_id': req.body.userId}).exec((err, memos) => {
             res.send(memos);
         });
-    })
+    });
 
     app.post('/home/remove', (req, res) => {
         Memo.deleteOne({'_id': req.body.memoId}).exec((err) => {
             res.end();
         });
-    })
+    });
+
+    app.post('/home/update', (req, res) => {
+        Memo.findById(req.body.userId).exec((err, result )=>{
+            result.title = req.body.title;
+            result.content = req.body.content;
+            result.save((err) =>{
+
+            })
+            res.end();
+        });
+    });
 
 }
