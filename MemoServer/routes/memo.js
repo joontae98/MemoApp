@@ -27,8 +27,6 @@ module.exports = (app, Memo) => {
         })
     });
 
-    //get으로 할려면 간편 url을 사용하여 값을 전달받아 사용하면됨
-    // 하지만 post로 하는 이유는 url 이 노출 되기때문에 post로 보안성을 높임
     app.post('/home', (req, res) => {
         Memo.find({'user_id': req.body.userId}).exec((err, memos) => {
             res.send(memos);
@@ -51,5 +49,15 @@ module.exports = (app, Memo) => {
             res.end();
         });
     });
+    app.post('/addId',(req, res) => {
+        Memo.findById(req.body.id).exec((err, res1) => {
+            // res1.user_id += req.body.user;// 문자열 그대로 합쳐지는 오류 발생
+
+            res1.user_id = [res1.user_id, req.body.user];
+            res1.save(err1 => {
+            });
+            res.send(res1);
+        })
+    })
 
 }
