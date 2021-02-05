@@ -28,7 +28,7 @@ public class MainActivity extends AppCompatActivity {
     EditText etxEmail, etxPw;
     Button btnReq;
     String TAG = "MainActivity.class",
-            url = "http://192.168.0.121:3000";
+            url = "http://192.168.0.113:3000";
 
 
     @Override

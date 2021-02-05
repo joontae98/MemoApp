@@ -67,7 +67,7 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.MyView
     @Override
     public MyViewHolder onCreateViewHolder(ViewGroup parent,
                                            int viewType) {
-        RelativeLayout v = (RelativeLayout) LayoutInflater.from(parent.getContext())
+        View v = (View) LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.row_memo, parent, false);
         MyViewHolder vh = new MyViewHolder(v);
         return vh;
@@ -90,21 +90,6 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.MyView
                         mListener.onItemClick(v, pos, memo) ;
                     }
                 }
-//                PopupMenu popup = new PopupMenu(mContext, v);//v는 클릭된 뷰를 의미
-//                        popup.getMenuInflater().inflate(R.menu.menu_popup, popup.getMenu());
-//                        popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
-//                            @Override
-//                            public boolean onMenuItemClick(MenuItem item) {
-//                                switch (item.getItemId()){
-//                                    case R.id.modify:
-//                                        break;
-//                                    case R.id.delete:
-//                                        break;
-//                                }
-//                                return false;
-//                            }
-//                        });
-//                        popup.show();
             }
         });
     }
